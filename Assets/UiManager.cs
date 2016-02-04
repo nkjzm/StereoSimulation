@@ -23,6 +23,10 @@ public class UiManager : MonoBehaviour
 	//sim
 	[SerializeField]
 	private Slider MoveSpeed;
+	[SerializeField]
+	private Toggle onnatsu;
+	[SerializeField]
+	private Toggle highsound;
 
 
 	//test
@@ -61,7 +65,11 @@ public class UiManager : MonoBehaviour
 			Init(false);
 		});
 		simStart.onClick.AddListener (() => {
-			FindObjectOfType<SoundManager>().SpeedAdapt(MoveSpeed.value);	
+			FindObjectOfType<SoundManager>().SpeedAdapt(
+				MoveSpeed.value,
+				onnatsu.isOn,
+				highsound.isOn
+			);	
 			Init(true);
 		});
 	}

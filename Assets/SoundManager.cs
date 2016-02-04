@@ -64,6 +64,11 @@ public class SoundManager : MonoBehaviour
 	[SerializeField]
 	private float moveSpeed;
 
+	[SerializeField]
+	private bool isVolumeRottof;
+	[SerializeField]
+	private bool isHighRottof;
+
 	[SerializeField,Range(0,22000)]
 	private float CotoffFrequency;
 	[SerializeField,Range(1f,10f)]
@@ -86,9 +91,11 @@ public class SoundManager : MonoBehaviour
 		isSimulation = issim;
 	}
 
-	public void SpeedAdapt(float m)
+	public void SpeedAdapt(float m,bool v,bool h)
 	{
 		moveSpeed = m;
+		isVolumeRottof = v;
+		isHighRottof = h;
 	}
 
 	IEnumerator Start () 
@@ -126,6 +133,8 @@ public class SoundManager : MonoBehaviour
 		if (isSimulation) {
 			FindObjectOfType<TestManager> ().gameObject.SetActive (false);
 			Play (0);
+			player.position = Vector3.back * 3;
+			StartCoroutine (anim ());
 			isItd = false;
 		} else {
 			SimulationSpeaker.gameObject.SetActive (false);
@@ -183,9 +192,24 @@ public class SoundManager : MonoBehaviour
 
 		angle = (angle + 360) % 360;
 
-		rollof = 1f/(5*(distance.magnitude-0.8f));
-		CotoffFrequency = (-distance.magnitude * 2200) + 22000;
+		if (isVolumeRottof) {
+			rollof = 1f / (5 * (distance.magnitude - 0.8f));
+		}
+
+		if (isHighRottof) {
+			CotoffFrequency = (-distance.magnitude * 2200) + 22000;
+		}
 		SetIid (-angle);
+	}
+
+	private IEnumerator anim()
+	{
+		float timer = 0;
+		while (true) {
+			timer += Time.deltaTime;
+			SimulationSpeaker.localScale = Vector3.one * ((Mathf.Sin (timer*10)*0.2f)+1);
+			yield return null;
+		}
 	}
 
 	public void SetClip()
